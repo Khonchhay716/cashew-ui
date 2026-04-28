@@ -13,8 +13,8 @@ const PAGE_SIZE = 10
 function Spinner({ color = 'text-white' }: { color?: string }) {
   return (
     <svg className={`animate-spin h-4 w-4 ${color}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
     </svg>
   )
 }
@@ -66,14 +66,14 @@ export default function PurchasePage() {
   const addItem = () => setItems([...items, { cashewTypeId: 0, qtyKg: '', pricePerKg: '' }])
   const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i))
   const updateItem = (i: number, field: keyof FormItem, value: any) => {
+    if (field === 'cashewTypeId') {
+      // focus SYNCHRONOUSLY inside the event — works on iOS & Android
+      qtyRefs.current[i]?.focus()
+    }
     const u = [...items]; u[i] = { ...u[i], [field]: value }
     if (field === 'cashewTypeId') {
       const t = types.find(t => t.id === +value)
       if (t) u[i].pricePerKg = String(t.defaultPrice)
-      const isTouch = window.matchMedia('(hover: none)').matches
-      if (!isTouch) {
-        setTimeout(() => qtyRefs.current[i]?.focus(), 50)
-      }
     }
     setItems(u)
   }
