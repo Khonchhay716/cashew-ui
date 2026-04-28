@@ -196,7 +196,7 @@ export default function PurchasePage() {
           </div>
 
           {/* Mobile cards */}
-          <div className="md:hidden space-y-2.5">
+          <div className="md:hidden space-y-2.5 mb-20">
             {list.map(p => (
               <div key={p.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 cursor-pointer" onClick={() => setExpanded(expanded === p.id ? null : p.id)}>
@@ -210,7 +210,7 @@ export default function PurchasePage() {
                       <ChevronDown size={16} className={`text-gray-400 transition-transform ${expanded === p.id ? 'rotate-180' : ''}`} />
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-1.5 mt-2">
+                  <div className="flex flex-wrap gap-1.5 mt-2 ">
                     {p.items.map((it, i) => (
                       <span key={i} className="bg-green-50 text-green-700 text-xs px-2 py-0.5 rounded-full">
                         {it.cashewTypeName}: {it.qtyKg}KG
