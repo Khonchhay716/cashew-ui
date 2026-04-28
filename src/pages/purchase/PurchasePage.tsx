@@ -1,5 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
-import { flushSync } from 'react-dom'
+import { useEffect, useState, useCallback } from 'react'
 import { getPurchases, createPurchase, deletePurchase, getTypes } from '../../services/api'
 import { Purchase, CashewType, FormItem, PagedResult } from '../../types'
 import Layout from '../../components/layout/Layout'
@@ -14,8 +13,8 @@ const PAGE_SIZE = 10
 function Spinner({ color = 'text-white' }: { color?: string }) {
   return (
     <svg className={`animate-spin h-4 w-4 ${color}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
     </svg>
   )
 }
@@ -37,8 +36,6 @@ export default function PurchasePage() {
   const [supplierPhone, setSupplierPhone] = useState('')
   const [note, setNote] = useState('')
   const [items, setItems] = useState<FormItem[]>([{ cashewTypeId: 0, qtyKg: '', pricePerKg: '' }])
-
-  const qtyRefs = useRef<(HTMLInputElement | null)[]>([])
 
   const load = useCallback(async (p: number, f: string, t: string, all = false, silent = false) => {
     if (!silent) setLoading(true)
@@ -66,18 +63,13 @@ export default function PurchasePage() {
 
   const addItem = () => setItems([...items, { cashewTypeId: 0, qtyKg: '', pricePerKg: '' }])
   const removeItem = (i: number) => setItems(items.filter((_, idx) => idx !== i))
-
   const updateItem = (i: number, field: keyof FormItem, value: any) => {
     const u = [...items]; u[i] = { ...u[i], [field]: value }
     if (field === 'cashewTypeId') {
       const t = types.find(t => t.id === +value)
       if (t) u[i].pricePerKg = String(t.defaultPrice)
     }
-    flushSync(() => setItems(u))
-    if (field === 'cashewTypeId') {
-      qtyRefs.current[i]?.focus()                              // immediate — Android & desktop
-      setTimeout(() => qtyRefs.current[i]?.focus(), 300)      // after iOS picker close animation
-    }
+    setItems(u)
   }
 
   const grandTotal = items.reduce((s, i) => s + (parseFloat(i.qtyKg) || 0) * (parseFloat(i.pricePerKg) || 0), 0)
@@ -107,7 +99,9 @@ export default function PurchasePage() {
       })
       const elapsed = Date.now() - start
       if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed))
-      toast.success('រក្សាទុករួច!'); setShowForm(false); reset()
+      toast.success('រក្សាទុករួច!')
+      setShowForm(false)
+      reset()
       window.scrollTo({ top: 0, behavior: 'smooth' })
       load(page, from, to, isAll, true)
     } catch {
@@ -292,9 +286,7 @@ export default function PurchasePage() {
                         <div className="grid grid-cols-2 gap-2">
                           <div>
                             <label className="text-xs text-gray-400 mb-0.5 block">ចំនួន (KG)</label>
-                            <input
-                              ref={el => { qtyRefs.current[i] = el }}
-                              type="number" value={item.qtyKg} onChange={e => updateItem(i, 'qtyKg', e.target.value)}
+                            <input type="number" value={item.qtyKg} onChange={e => updateItem(i, 'qtyKg', e.target.value)}
                               className="w-full border border-gray-200 rounded-lg px-2 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-400"
                               placeholder="0.000" step="0.001" />
                           </div>
