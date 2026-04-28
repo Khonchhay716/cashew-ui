@@ -427,6 +427,7 @@ export default function PurchasePage() {
       const elapsed = Date.now() - start
       if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed))
       toast.success('រក្សាទុករួច!'); setShowForm(false); reset()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
       load(page, from, to, isAll, true)
     } catch {
       toast.error('Error!')
