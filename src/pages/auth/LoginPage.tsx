@@ -6,6 +6,15 @@ import toast from 'react-hot-toast'
 
 type Mode = 'login' | 'register' | 'forgot' | 'reset'
 
+function Spinner() {
+  return (
+    <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+    </svg>
+  )
+}
+
 export default function LoginPage() {
   const nav = useNavigate()
   const [params] = useSearchParams()
@@ -137,7 +146,7 @@ export default function LoginPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1.5">ឈ្មោះ</label>
                 <input type="text" value={name} onChange={e => setName(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-base"
                   placeholder="ឈ្មោះរបស់អ្នក" required />
               </div>
             )}
@@ -147,7 +156,7 @@ export default function LoginPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1.5">Email</label>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-base"
                   placeholder="example@email.com" required />
               </div>
             )}
@@ -157,7 +166,7 @@ export default function LoginPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1.5">Password</label>
                 <input type="password" value={pw} onChange={e => setPw(e.target.value)}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-base"
                   placeholder={mode === 'register' ? 'យ៉ាងហោច 6 តួអក្សរ' : '••••••••'} required />
               </div>
             )}
@@ -167,7 +176,7 @@ export default function LoginPage() {
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1.5">បញ្ជាក់ Password</label>
                 <input type="password" value={confirm} onChange={e => setConfirm(e.target.value)}
-                  className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm
+                  className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-base
                     ${confirm && pw !== confirm ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}
                   placeholder="••••••••" required />
                 {confirm && pw !== confirm && (
@@ -182,13 +191,13 @@ export default function LoginPage() {
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">Password ថ្មី</label>
                   <input type="password" value={newPw} onChange={e => setNewPw(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm"
+                    className="w-full border border-gray-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-base"
                     placeholder="យ៉ាងហោច 6 តួអក្សរ" required />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-600 mb-1.5">បញ្ជាក់ Password ថ្មី</label>
                   <input type="password" value={newPwC} onChange={e => setNewPwC(e.target.value)}
-                    className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-sm
+                    className={`w-full border rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-green-400 text-base
                       ${newPwC && newPw !== newPwC ? 'border-red-300 bg-red-50' : 'border-gray-200'}`}
                     placeholder="••••••••" required />
                   {newPwC && newPw !== newPwC && (
@@ -210,8 +219,8 @@ export default function LoginPage() {
 
             {/* Submit */}
             <button type="submit" disabled={loading}
-              className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50 text-sm transition-colors">
-              {loading ? 'Loading...' : titles[mode]}
+              className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-50 text-sm transition-colors flex items-center justify-center gap-2">
+              {loading ? <><Spinner /> Loading...</> : titles[mode]}
             </button>
           </form>
         )}

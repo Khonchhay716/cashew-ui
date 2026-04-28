@@ -102,7 +102,6 @@ export default function PurchasePage() {
 
   return (
     <Layout>
-      {/* ✅ Header — filter + add on same row */}
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-xl font-bold text-gray-800">ទិញចូល</h1>
         <div className="flex items-center gap-2">
@@ -234,12 +233,12 @@ export default function PurchasePage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-500 mb-1 block">ឈ្មោះអ្នកលក់</label>
                   <input value={supplierName} onChange={e => setSupplierName(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Optional" />
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Optional" />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 mb-1 block">ទូរស័ព្ទ</label>
                   <input value={supplierPhone} onChange={e => setSupplierPhone(e.target.value)}
-                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Optional" />
+                    className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-green-400" placeholder="Optional" />
                 </div>
               </div>
 
@@ -255,7 +254,7 @@ export default function PurchasePage() {
                       <div key={i} className="border border-gray-100 rounded-xl p-3 bg-gray-50">
                         <div className="flex items-center gap-2 mb-2">
                           <select value={item.cashewTypeId} onChange={e => updateItem(i, 'cashewTypeId', +e.target.value)}
-                            className="flex-1 border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 bg-white">
+                            className="flex-1 border border-gray-200 rounded-lg px-2 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-400 bg-white">
                             <option value={0}>— ជ្រើសប្រភេទ —</option>
                             {types.map(t => <option key={t.id} value={t.id}>{t.name}</option>)}
                           </select>
@@ -265,13 +264,13 @@ export default function PurchasePage() {
                           <div>
                             <label className="text-xs text-gray-400 mb-0.5 block">ចំនួន (KG)</label>
                             <input type="number" value={item.qtyKg} onChange={e => updateItem(i, 'qtyKg', e.target.value)}
-                              className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                              className="w-full border border-gray-200 rounded-lg px-2 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-400"
                               placeholder="0.000" step="0.001" />
                           </div>
                           <div>
                             <label className="text-xs text-gray-400 mb-0.5 block">តម្លៃ/KG</label>
                             <input type="number" value={item.pricePerKg} onChange={e => updateItem(i, 'pricePerKg', e.target.value)}
-                              className="w-full border border-gray-200 rounded-lg px-2 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-400"
+                              className="w-full border border-gray-200 rounded-lg px-2 py-2 text-base focus:outline-none focus:ring-2 focus:ring-green-400"
                               placeholder="0.00" step="0.01" />
                           </div>
                         </div>
@@ -290,7 +289,7 @@ export default function PurchasePage() {
               <div>
                 <label className="text-xs font-semibold text-gray-500 mb-1 block">កំណត់ចំណាំ</label>
                 <textarea value={note} onChange={e => setNote(e.target.value)} rows={2}
-                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-green-400 resize-none" />
+                  className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-green-400 resize-none" />
               </div>
 
               <button type="submit" className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 text-sm">Save Purchase</button>
