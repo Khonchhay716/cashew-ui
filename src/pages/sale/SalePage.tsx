@@ -10,6 +10,15 @@ import { Plus, X, Trash2, ChevronDown } from 'lucide-react'
 
 const PAGE_SIZE = 10
 
+function Spinner({ color = 'text-white' }: { color?: string }) {
+  return (
+    <svg className={`animate-spin h-4 w-4 ${color}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+    </svg>
+  )
+}
+
 export default function SalePage() {
   const [result, setResult]     = useState<PagedResult<Sale> | null>(null)
   const [types, setTypes]       = useState<CashewType[]>([])
@@ -21,6 +30,7 @@ export default function SalePage() {
   const [page, setPage]         = useState(1)
   const [expanded, setExpanded] = useState<number | null>(null)
   const [loading, setLoading]   = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   const [customerName, setCustomerName]   = useState('')
   const [customerPhone, setCustomerPhone] = useState('')
@@ -73,6 +83,8 @@ export default function SalePage() {
     e.preventDefault()
     const validItems = items.filter(i => i.cashewTypeId > 0 && parseFloat(i.qtyKg) > 0)
     if (!validItems.length) { toast.error('សូមបន្ថែមប្រភេទ!'); return }
+    setSubmitting(true)
+    const start = Date.now()
     try {
       await createSale({
         customerName: customerName || null,
@@ -85,9 +97,15 @@ export default function SalePage() {
           pricePerKg: parseFloat(i.pricePerKg)
         }))
       })
+      const elapsed = Date.now() - start
+      if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed))
       toast.success('រក្សាទុករួច!'); setShowForm(false); reset()
       load(page, from, to, isAll)
-    } catch { toast.error('Error!') }
+    } catch {
+      toast.error('Error!')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const del = async (id: number) => {
@@ -115,9 +133,9 @@ export default function SalePage() {
 
       <div className="grid grid-cols-3 gap-2 mb-4">
         {[
-          { l: 'ចំនួន',  v: String(result?.total || 0),        c: 'text-orange-500' },
-          { l: 'KG',     v: totalKg.toLocaleString(),           c: 'text-blue-600' },
-          { l: 'សរុប', v: `${totalPrice.toLocaleString()}`,  c: 'text-orange-500' }
+          { l: 'ចំនួន',  v: String(result?.total || 0),       c: 'text-orange-500' },
+          { l: 'KG',     v: totalKg.toLocaleString(),          c: 'text-blue-600' },
+          { l: 'សរុប', v: `${totalPrice.toLocaleString()}`, c: 'text-orange-500' }
         ].map(s => (
           <div key={s.l} className="bg-white rounded-2xl p-3 shadow-sm border border-gray-100 text-center">
             <div className="text-xs text-gray-400">{s.l}</div>
@@ -127,7 +145,9 @@ export default function SalePage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-16 text-gray-300 text-sm animate-pulse">Loading...</div>
+        <div className="flex justify-center items-center py-16 gap-2 text-gray-300 text-sm">
+          <Spinner color="text-gray-300" /> Loading...
+        </div>
       ) : (
         <>
           {/* Desktop table */}
@@ -292,7 +312,10 @@ export default function SalePage() {
                   className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-orange-400 resize-none"/>
               </div>
 
-              <button type="submit" className="w-full bg-orange-500 text-white py-3.5 rounded-xl font-semibold hover:bg-orange-600 text-sm">Save Sale</button>
+              <button type="submit" disabled={submitting}
+                className="w-full bg-orange-500 text-white py-3.5 rounded-xl font-semibold hover:bg-orange-600 disabled:opacity-60 text-sm flex items-center justify-center gap-2 transition-opacity">
+                {submitting ? <><Spinner /> រក្សាទុក...</> : 'Save Sale'}
+              </button>
             </form>
           </div>
         </div>

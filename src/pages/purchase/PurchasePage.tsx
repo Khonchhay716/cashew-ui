@@ -10,6 +10,15 @@ import { Plus, X, Trash2, ChevronDown } from 'lucide-react'
 
 const PAGE_SIZE = 10
 
+function Spinner({ color = 'text-white' }: { color?: string }) {
+  return (
+    <svg className={`animate-spin h-4 w-4 ${color}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+    </svg>
+  )
+}
+
 export default function PurchasePage() {
   const [result, setResult] = useState<PagedResult<Purchase> | null>(null)
   const [types, setTypes] = useState<CashewType[]>([])
@@ -21,6 +30,7 @@ export default function PurchasePage() {
   const [page, setPage] = useState(1)
   const [expanded, setExpanded] = useState<number | null>(null)
   const [loading, setLoading] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   const [supplierName, setSupplierName] = useState('')
   const [supplierPhone, setSupplierPhone] = useState('')
@@ -73,6 +83,8 @@ export default function PurchasePage() {
     e.preventDefault()
     const validItems = items.filter(i => i.cashewTypeId > 0 && parseFloat(i.qtyKg) > 0)
     if (!validItems.length) { toast.error('សូមបន្ថែមប្រភេទ!'); return }
+    setSubmitting(true)
+    const start = Date.now()
     try {
       await createPurchase({
         supplierName: supplierName || null,
@@ -85,9 +97,15 @@ export default function PurchasePage() {
           pricePerKg: parseFloat(i.pricePerKg)
         }))
       })
+      const elapsed = Date.now() - start
+      if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed))
       toast.success('រក្សាទុករួច!'); setShowForm(false); reset()
       load(page, from, to, isAll)
-    } catch { toast.error('Error!') }
+    } catch {
+      toast.error('Error!')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const del = async (id: number) => {
@@ -127,7 +145,9 @@ export default function PurchasePage() {
       </div>
 
       {loading ? (
-        <div className="text-center py-16 text-gray-300 text-sm animate-pulse">Loading...</div>
+        <div className="flex justify-center items-center py-16 gap-2 text-gray-300 text-sm">
+          <Spinner color="text-gray-300" /> Loading...
+        </div>
       ) : (
         <>
           {/* Desktop table */}
@@ -292,7 +312,10 @@ export default function PurchasePage() {
                   className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-green-400 resize-none" />
               </div>
 
-              <button type="submit" className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 text-sm">Save Purchase</button>
+              <button type="submit" disabled={submitting}
+                className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-60 text-sm flex items-center justify-center gap-2 transition-opacity">
+                {submitting ? <><Spinner /> រក្សាទុក...</> : 'Save Purchase'}
+              </button>
             </form>
           </div>
         </div>

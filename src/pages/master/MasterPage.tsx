@@ -5,6 +5,15 @@ import Layout from '../../components/layout/Layout'
 import toast from 'react-hot-toast'
 import { Plus, Pencil, Trash2, X, Check } from 'lucide-react'
 
+function Spinner({ color = 'text-white' }: { color?: string }) {
+  return (
+    <svg className={`animate-spin h-4 w-4 ${color}`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
+      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"/>
+    </svg>
+  )
+}
+
 export default function MasterPage() {
   const [types, setTypes] = useState<CashewType[]>([])
   const [showForm, setShowForm] = useState(false)
@@ -12,6 +21,7 @@ export default function MasterPage() {
   const [name, setName] = useState('')
   const [price, setPrice] = useState('')
   const [desc, setDesc] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
   const load = () => getTypes().then(r => setTypes(r.data))
   useEffect(() => { load() }, [])
@@ -25,12 +35,20 @@ export default function MasterPage() {
 
   const submit = async (e: React.FormEvent) => {
     e.preventDefault()
+    setSubmitting(true)
+    const start = Date.now()
     try {
       if (editId) await updateType(editId, { name, defaultPrice: parseFloat(price), description: desc||null })
       else await createType({ name, defaultPrice: parseFloat(price), description: desc||null })
+      const elapsed = Date.now() - start
+      if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed))
       toast.success(editId ? 'Updated!' : 'បានបន្ថែម!')
       setShowForm(false); reset(); load()
-    } catch { toast.error('Error!') }
+    } catch {
+      toast.error('Error!')
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const del = async (id: number) => {
@@ -126,8 +144,9 @@ export default function MasterPage() {
                   className="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-green-400 resize-none"
                   placeholder="Optional"/>
               </div>
-              <button type="submit" className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 text-sm flex items-center justify-center gap-2">
-                <Check size={16}/>{editId?'Update':'Save'}
+              <button type="submit" disabled={submitting}
+                className="w-full bg-green-600 text-white py-3.5 rounded-xl font-semibold hover:bg-green-700 disabled:opacity-60 text-sm flex items-center justify-center gap-2 transition-opacity">
+                {submitting ? <><Spinner /> រក្សាទុក...</> : <><Check size={16}/>{editId?'Update':'Save'}</>}
               </button>
             </form>
           </div>
