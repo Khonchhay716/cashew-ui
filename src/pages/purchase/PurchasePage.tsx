@@ -196,7 +196,7 @@ export default function PurchasePage() {
           </div>
 
           {/* Mobile cards */}
-          <div className="md:hidden space-y-2.5 mb-20">
+          <div className="md:hidden space-y-2.5 mb-20 pb-10 ">
             {list.map(p => (
               <div key={p.id} className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
                 <div className="p-4 cursor-pointer" onClick={() => setExpanded(expanded === p.id ? null : p.id)}>

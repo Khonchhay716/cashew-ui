@@ -97,7 +97,7 @@ export default function MasterPage() {
         </table>
       </div>
 
-      <div className="md:hidden space-y-3 mb-20">
+      <div className="md:hidden space-y-3 mb-20 pb-10">
         {types.map(t => (
           <div key={t.id} className="bg-white rounded-2xl p-4 shadow-sm border border-gray-100">
             <div className="flex justify-between items-start">
