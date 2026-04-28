@@ -37,12 +37,12 @@ export default function SalePage() {
   const [note, setNote]                   = useState('')
   const [items, setItems]                 = useState<FormItem[]>([{ cashewTypeId: 0, qtyKg: '', pricePerKg: '' }])
 
-  const load = useCallback(async (p: number, f: string, t: string, all = false) => {
-    setLoading(true)
+  const load = useCallback(async (p: number, f: string, t: string, all = false, silent = false) => {
+    if (!silent) setLoading(true)
     try {
       const r = await getSales(p, PAGE_SIZE, f, t, all)
       setResult(r.data)
-    } finally { setLoading(false) }
+    } finally { if (!silent) setLoading(false) }
   }, [])
 
   useEffect(() => {
@@ -99,8 +99,11 @@ export default function SalePage() {
       })
       const elapsed = Date.now() - start
       if (elapsed < 500) await new Promise(r => setTimeout(r, 500 - elapsed))
-      toast.success('រក្សាទុករួច!'); setShowForm(false); reset()
-      load(page, from, to, isAll)
+      toast.success('រក្សាទុករួច!')
+      setShowForm(false)
+      reset()
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      load(page, from, to, isAll, true)
     } catch {
       toast.error('Error!')
     } finally {
@@ -111,7 +114,7 @@ export default function SalePage() {
   const del = async (id: number) => {
     if (!confirm('លុបចោល?')) return
     await deleteSale(id); toast.success('Deleted!')
-    load(page, from, to, isAll)
+    load(page, from, to, isAll, true)
   }
 
   const list       = result?.data         || []
